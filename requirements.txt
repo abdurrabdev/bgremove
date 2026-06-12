@@ -6,7 +6,7 @@ pydantic==2.6.4
 starlette==0.36.3
 
 requests==2.31.0
-numpy==1.26.4
+numpy==2.3.0
 pillow==10.4.0
 
 rembg==2.0.75
