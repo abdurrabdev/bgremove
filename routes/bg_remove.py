@@ -1,15 +1,38 @@
+import logging
+
 from fastapi import APIRouter, UploadFile, File
-from fastapi.responses import StreamingResponse
+from fastapi.responses import Response
+
 from services.bg_service import remove_bg
-import io
+
+
+logger = logging.getLogger(__name__)
 
 router = APIRouter()
 
+
+# =========================================================
+# BACKGROUND REMOVAL
+# =========================================================
+
 @router.post("/bg-remove")
 async def bg_remove(file: UploadFile = File(...)):
-    output_image = await remove_bg(file)
 
-    return StreamingResponse(
-        io.BytesIO(output_image),
-        media_type="image/png"
+    logger.info(
+        "BG REMOVE REQUEST | filename=%s | content_type=%s",
+        file.filename,
+        file.content_type,
+    )
+
+    output = await remove_bg(file)
+
+    logger.info(
+        "BG REMOVE RESPONSE | filename=%s | output_size=%.2f MB",
+        file.filename,
+        len(output) / 1024 / 1024,
+    )
+
+    return Response(
+        content=output,
+        media_type="image/png",
     )
